@@ -2,7 +2,7 @@
 
 ## Abstract
 
-The adoption rate of Electric Vehicles (EVs) is critical metric for tracking progress in transportation
+The adoption rate of Electric Vehicles (EVs) is a critical metric for tracking progress in transportation
 decarbonization.
 Identifying the determinants of adoption and accurately forecasting future trends are essential for effective policy and
 infrastructure planning.
@@ -29,12 +29,12 @@ American Community Survey (ACS). Due to data availability, 5-year estimates were
 single-year data (e.g., 2016–2020 estimates represent the year 2020).
 
 <figure style="text-align: center;">
-    <img src="data/results/images/Spatial_EV_Adoption_Rate_Comparison.png" alt="Spatial_EV_Adoption_Rate_Comparison.png" width="80%">
-    <figcaption>
+    <img src="data/results/images/Spatial_EV_Adoption_Rate_Comparison.png" alt="Spatial_EV_Adoption_Rate_Comparison.png" width="100%">
+    <figcaption style="text-align: center;">
         <b>Fig.1 Spatial-temporal Distribution of EV Adoption Rate in CA</b>
     </figcaption>
 </figure>
-
+<br>
 The data used in this model range from 2012 to 2020 with yearly time granularity, as listed below:
 
 **Table.1 Data Sources and Descriptions**
@@ -49,13 +49,14 @@ The data used in this model range from 2012 to 2020 with yearly time granularity
 | CA_Counties.zip                                                                                            | County-level shapefiles for California                 |
 
 **Data Limitations and Exclusions** <br>
+
 Two notable exclusions were made due to data compatibility issues:
 
 - Charging Infrastructure: The EV_Chargers dataset range from 2020 to 2022 and was thus excluded due to a temporal
   mismatch with other variables.
-- Feature Consistency: While the ACS provides over 100 annual metrics, significant inconsistencies in column
+- Feature Consistency: While the ACS provides over 100 annual socioeconomic metrics, significant inconsistencies in column
   nomenclature across years made standardization difficult even using regular expressions. Consequently,
-  socioeconomic features with inconsistent metadata were excluded from the current model. Future work should prioritize
+  socioeconomic features with inconsistent metadata were excluded from the current model. Future work will prioritize
   reconciling these naming discrepancies to incorporate the full range of socioeconomic features.
 
 # Model
@@ -68,29 +69,30 @@ mitigate the influence of these extreme values and stabilize variance, a log-tra
 the final target variable is defined as:
 
 $$
-R_{i,t} = log(1 + \frac{N_{i,t}}{Population/10000}) \tag{1}
+R_{i,t} = \log\left(1 + \frac{N_{i,t}}{\text{Population}/10000}\right) \tag{1}
 $$
 
 Where $R_{i,t}$ denotes the log-transformed EV adoption rate, $N_{i,t}$ denotes the number of registered EVs in
 county $i$ in year $t$, and $Population_{i,t}$ denotes the corresponding population.
 
 <figure style="text-align: center;">
-    <img src="data/results/images/Combined_EV_Adoption_Rate_Distribution.png" alt="EV Adoption Rate Distribution" width="80%">
-    <figcaption>
+    <img src="data/results/images/Combined_EV_Adoption_Rate_Distribution.png" alt="EV Adoption Rate Distribution" width="100%">
+    <figcaption style="text-align: center;">
         <b>Fig.2 EV Adoption Rate Distribution</b>
     </figcaption>
 </figure>
-
+<br>
 This study employs an XGBoost framework to predict the log-transformed EV adoption rate.
 To capture the spatiotemporal dynamics of EV adoption, the model constructs spatial and temporal lag features as part of
 the input features. The temporal lag features are defined as the prior $k$ years adoption rates for each county, and
 the spatial lag feature is defined as the average EV adoption rate of neighboring counties from the preceding year.
 
 $$
-\begin{align}
-S_{i,t} &= \frac{\sum_{j \in N(i)} R_{j,t-1}}{|A(i)|} \tag{2} \\
-T_{i,t}^k &= R_{i,t-k} \tag{3}
-\end{align}
+S_{i,t} = \frac{\sum_{j \in N(i)} R_{j,t-1}}{|A(i)|} \tag{2}
+$$
+
+$$
+T_{i,t}^k = R_{i,t-k} \tag{3}
 $$
 
 Where $S_{i,t}$ denotes the spatial lag feature for county $i$ at year $t$, $A(i)$ denotes the set of neighboring
@@ -123,24 +125,24 @@ low
 EV adoption.
 
 <figure style="text-align: center;">
-    <img src="data/results/images/Residuals_and_Actual_vs_Predicted.png" alt="Residuals_and_Prediction_result" width="80%">
-    <figcaption align="center">
+    <img src="data/results/images/Residuals_and_Actual_vs_Predicted.png" alt="Residuals_and_Prediction_result" width="100%">
+    <figcaption style="text-align: center;">
         <b>Fig.3 XGBOOST prediction residuals</b>
     </figcaption>
 </figure>
-
+<br>
 Figure 4 illustrates the top ten features ranked by gains. The dominant feature is the historical EV adoption
 rate (one-year lag), underscoring a strong temporal dependence in the adoption process. Five out of ten most important
 features
 in the model are housing units values, serving as proxies for regional wealthy family numbers.
 
 <figure style="text-align: center;">
-    <img src="data/results/images/Feature_importance.png" alt="Feature_Importance.png" width="80%">
-    <figcaption align="center">
+    <img src="data/results/images/Feature_importance.png" alt="Feature_Importance.png" width="100%">
+    <figcaption style="text-align: center;">
         <b>Fig.4 Feature importance</b>
     </figcaption>
 </figure>
-
+<br>
 To interpret the directionality of these effects, SHAP (SHapley Additive exPlanations) value analysis is presented in
 Figure 5. Red and blue points correspond to high and low feature values, respectively. The analysis reveals a strictly
 positive relationship between historical and predicted adoption rates. While spatial lag features (adoption rates in
@@ -149,11 +151,12 @@ Additionally, higher housing unit values consistently drive higher predicted ado
 between asset wealth and EV adoption.
 
 <figure style="text-align: center;">
-    <img src="data/results/images/shap_beeswarm.png" alt="shap_beeswarm.png" width="80%">
-    <figcaption align="center">
+    <img src="data/results/images/shap_beeswarm.png" alt="shap_beeswarm.png" width="100%">
+    <figcaption style="text-align: center;">
         <b>Fig.5 SHAP value analysis</b>
     </figcaption>
 </figure>
+<br>
 
 # Conclusion and Discussion
 
