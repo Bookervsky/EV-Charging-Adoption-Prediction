@@ -94,7 +94,7 @@ S_{i,t} = \frac{\sum_{j \in N(i)} R_{j,t-1}}{|A(i)|} \tag{2}
 $$
 
 $$
-T_{i,t}^k = \frac{N_{i,t}}{Population_{i,t}/10000} \tag{3}
+T_{i,t}^k = \frac{N_{i,t-k}}{Population_{i,t-k}/10000} \tag{3}
 $$
 
 Where $S_{i,t}$ denotes the spatial lag feature for county $i$ at year $t$, $A(i)$ denotes the set of neighboring
